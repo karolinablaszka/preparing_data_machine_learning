@@ -19,6 +19,24 @@ ax = df_percent.plot(kind='bar', figsize=(6,6), width=0.5)
 plt.xticks(rotation = 0)
 plt.show() 
 
+#sprawdź typy danych
+data_types = df.dtypes
+print(f"Data types: {data_types}")
+
+#sprawdź czy są duplikaty (opcjonalnie)
+data_if_duplicated = df.duplicated(keep = "last").iloc[0] 
+print(f"Data is duplicated: {data_if_duplicated}")
+
+#wyznacz korelacje cech vs kolumna 'Price'
+col_correlation = df.corr()
+print(f"Correlation: {col_correlation}")
+
+#Zadanie główne: 1. Wczytaj ponownie plik (utwórz funkcję), gdzie:
+#będą pobierane tylko wybrane kolumny,
+#zostaną zdefiniowane typy ww. kolumn.
+
+
+
 
 
 
