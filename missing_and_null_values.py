@@ -1,7 +1,11 @@
 import pandas as pd
-from typing import List, Tuple
+from typing import List, Dict
 import numpy as np
 import matplotlib.pyplot as plt
+from sklearn.impute import SimpleImputer, KNNImputer
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import mean_absolute_error
+from sklearn.linear_model import LinearRegression
 
 file_path = "C:\\Users\\karol\\machine_learning\\"
 
@@ -35,13 +39,48 @@ print(f"Correlation: {col_correlation}")
 #będą pobierane tylko wybrane kolumny,
 #zostaną zdefiniowane typy ww. kolumn.
 
+def read_file(df):
+    df_2 = df.select_dtypes(include=["int16", "int32", "int64", "float16", "float32", "float64"])
+    return df_2
+
+#2. Przygotuj kilka metod/strategii do zastępowania brakujących wartości:
+#wybierz właściwe kolumny
+#zastanów się czy każda metoda jest właściwa dla całego datasetu
+#wybierz tylko kolumny z wartościami numerycznymi,
+#zastosuj wybrane metody i porównaj metrykę
+#zmień LinearRegression na RandomForestRegressor (opcjonalnie)
+#sprawdź jakie będzie MAE bez uzupełniania brakujących wartości
+
+
+def simple_imputer(df_2):
+    mean_imputer = SimpleImputer(missing_values=np.nan, strategy='mean', fill_value=None)
+    mean_imputer_transform = mean_imputer.fit_transform(df_2[['YearBuilt', 'CouncilArea']])
+    return 'to ja' + mean_imputer_transform
+    
+def knn_imputer(df_2):
+    knn = KNNImputer(missing_values=np.nan)
+    knn_transform = knn.fit_transform(df_2)
+    return knn_transform
 
 
 
 
+# houses_predictors = df[['Car', 'BuildingArea', 'Distance', 'Bathroom']]
+# houses_target = df['Price']
 
-# def main(file_path: str) -> pd.DataFrame:  
-#     return pd.read_csv(file_path, usecols=col_list)
 
-# if __name__=='__main__':
-#     main()
+# X_train, X_test, y_train, y_test = train_test_split(houses_predictors, houses_target, train_size=0.7, test_size=0.3, random_state=0
+# )
+
+# def score_dataset(X_train, X_test, y_train, y_test):
+#     regr_model = LinearRegression()
+#     regr_model.fit(X_train, y_train)
+#     preds = regr_model.predict(X_test)
+#     return mean_absolute_error(y_test, preds)
+
+# MAE = score_dataset(X_train, X_test, y_train, y_test)
+
+
+
+#if __name__=='__simple_imputer__':
+#     simple_imputer(['BuildingArea', 'YearBuilt'])
