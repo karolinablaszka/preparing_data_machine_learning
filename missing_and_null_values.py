@@ -52,35 +52,27 @@ def read_file(df):
 #sprawdź jakie będzie MAE bez uzupełniania brakujących wartości
 
 
-def simple_imputer(df_2):
-    mean_imputer = SimpleImputer(missing_values=np.nan, strategy='mean', fill_value=None)
-    mean_imputer_transform = mean_imputer.fit_transform(df_2[['YearBuilt', 'CouncilArea']])
-    return 'to ja' + mean_imputer_transform
+df_2 = df.select_dtypes(include=["int16", "int32", "int64", "float16", "float32", "float64"])
+mean_imputer = SimpleImputer(missing_values=np.nan, strategy='mean', fill_value=None)
+mean_imputer_transform = mean_imputer.fit_transform(df_2[['YearBuilt', 'Car']])
+print (f'SimpleImputer: {mean_imputer_transform}')
     
-def knn_imputer(df_2):
-    knn = KNNImputer(missing_values=np.nan)
-    knn_transform = knn.fit_transform(df_2)
-    return knn_transform
+knn = KNNImputer(missing_values=np.nan)
+knn_transform = knn.fit_transform(df_2)
+print (f'KNNImputer: {knn_transform}')
+
+houses_predictors = df[['Car', 'BuildingArea', 'Distance', 'Bathroom']]
+houses_target = df['Price']
+
+X_train, X_test, y_train, y_test = train_test_split(houses_predictors, houses_target, train_size=0.7, test_size=0.3, random_state=0
+ )
+ 
+def score_dataset(X_train, X_test, y_train, y_test):
+    regr_model = LinearRegression()
+    regr_model.fit(X_train, y_train)
+    preds = regr_model.predict(X_test)
+    return mean_absolute_error(y_test, preds)
 
 
-
-
-# houses_predictors = df[['Car', 'BuildingArea', 'Distance', 'Bathroom']]
-# houses_target = df['Price']
-
-
-# X_train, X_test, y_train, y_test = train_test_split(houses_predictors, houses_target, train_size=0.7, test_size=0.3, random_state=0
-# )
-
-# def score_dataset(X_train, X_test, y_train, y_test):
-#     regr_model = LinearRegression()
-#     regr_model.fit(X_train, y_train)
-#     preds = regr_model.predict(X_test)
-#     return mean_absolute_error(y_test, preds)
-
-# MAE = score_dataset(X_train, X_test, y_train, y_test)
-
-
-
-#if __name__=='__simple_imputer__':
-#     simple_imputer(['BuildingArea', 'YearBuilt'])
+MAE = score_dataset(X_train, X_test, y_train, y_test)
+print(f'KNNImputer: {MAE}')
