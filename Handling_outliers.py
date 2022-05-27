@@ -1,7 +1,7 @@
 import pandas as pd
-from typing import List, Dict, Callable
+from typing import Dict, Callable
 import numpy as np
-from sklearn.impute import SimpleImputer, KNNImputer
+from sklearn.impute import KNNImputer
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import mean_absolute_error
 from sklearn.linear_model import LinearRegression
@@ -25,37 +25,27 @@ col_list = list(df)
 
 df = df.select_dtypes(include=["int16", "int32", "int64", "float16", "float32", "float64"])
 
-#def percentiles_outliers(df):
-    #lower_percentile = 0.1
-    #higher_percentile = 0.9
-    #low, high = df.quantile([lower_percentile, higher_percentile])
-    #return (df[df < low]) & (df[df > high])
+def percentiles_outliers(df):
+    low, high = np.percentile(df, [10, 90])
+    return (df < low) & (df > high)
         
 
 def iqr_outliers(df):
-    Q1 = df.quantile(0.1)
-    Q3 = df.quantile(0.9)
+    Q1, Q3 = np.percentile(df, [10, 90])
     IQR = Q3 - Q1
-    #return (df < (Q1 - 1.5 * IQR))&(df > (Q3 + 1.5 * IQR))
-    print (f'dwa: {(df < (Q1 - 1.5 * IQR))&(df > (Q3 + 1.5 * IQR))}')
-
+    return (df < (Q1 - 1.5 * IQR))&(df > (Q3 + 1.5 * IQR))
+    
 
 def z_score(df):
-    outlier = []
-    for i in df:
-        z = (i-np.mean(df))/np.std(df)
-        if z > 3:
-            outlier.append(i)
-    #return outlier
-    print (f'trzy: {outlier}')
+    return zscore_outlier(df) > 3
 
 
 def modified_z_score_outlier(df):    
     mad_column = median_abs_deviation(df)
     median = np.median(df)
     mad_score = np.abs(0.6745 * (df - median) / mad_column)
-    #return mad_score > 3.5
-    print (f'cztery: {mad_score > 3.5}')    
+    return mad_score > 3.5
+       
 
 
 # df_2 = df.select_dtypes(include=["int16", "int32", "int64", "float16", "float32", "float64"])
@@ -65,7 +55,7 @@ def modified_z_score_outlier(df):
     
 knn = KNNImputer(missing_values=np.nan)
 knn_transform = knn.fit_transform(df)
-print (f'KNNImputer: {knn_transform}')
+#print (f'KNNImputer: {knn_transform}')
 
 
  
@@ -76,9 +66,6 @@ def score_dataset(X_train, X_test, y_train, y_test):
      return mean_absolute_error(y_test, preds)
 
 
-#MAE = score_dataset(X_train, X_test, y_train, y_test)
-#print(f'MAE: {MAE}')
-
 def outliers(df_copy: pd.DataFrame, outliers_methods_dict: Dict[str, Callable]):
 
     for method_name, method in outliers_methods_dict.items():
@@ -87,7 +74,7 @@ def outliers(df_copy: pd.DataFrame, outliers_methods_dict: Dict[str, Callable]):
 
         df = df_copy.copy()
 
-        print('\nOutliers:\n\n', df.apply(lambda x: method(x)).sum(), '\n\n')
+        print('\nOutliers:\n', df.apply(lambda x: method(x)).sum(), '\n')
 
         df = df[df.apply(lambda x: ~method(x))].dropna()
 
@@ -103,10 +90,10 @@ def outliers(df_copy: pd.DataFrame, outliers_methods_dict: Dict[str, Callable]):
 def outliers_results():
     outliers_methods_dict = {
         "percentiles_outliers": percentiles_outliers,
+        "iqr_outliers": iqr_outliers,
         "z_score": z_score,
-        "mod_z_score": modified_z_score_outlier,
-        "iqr_outliers": iqr_outliers
-    }
+        "modified_z_score_outlier": modified_z_score_outlier
+        }
     outliers(df, outliers_methods_dict)
 
 
