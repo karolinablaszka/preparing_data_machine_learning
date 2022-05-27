@@ -66,6 +66,15 @@ def score_dataset(X_train, X_test, y_train, y_test):
      return mean_absolute_error(y_test, preds)
 
 
+houses_predictors = df[['Rooms', 'Bedroom2']]
+houses_target = df['Price']
+
+X_train, X_test, y_train, y_test = train_test_split(houses_predictors, houses_target, train_size=0.7, test_size=0.3, random_state=0
+)
+
+print("MAE: ", score_dataset(X_train, X_test, y_train, y_test))
+
+
 def outliers(df_copy: pd.DataFrame, outliers_methods_dict: Dict[str, Callable]):
 
     for method_name, method in outliers_methods_dict.items():
@@ -78,13 +87,6 @@ def outliers(df_copy: pd.DataFrame, outliers_methods_dict: Dict[str, Callable]):
 
         df = df[df.apply(lambda x: ~method(x))].dropna()
 
-        houses_predictors = df[['Rooms', 'Bedroom2']]
-        houses_target = df['Price']
-
-        X_train, X_test, y_train, y_test = train_test_split(houses_predictors, houses_target, train_size=0.7, test_size=0.3, random_state=0
-        )
-
-        print("\nMAE: ", score_dataset(X_train, X_test, y_train, y_test), "\n\n\n\n")
 
 
 def outliers_results():
