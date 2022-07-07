@@ -12,10 +12,8 @@ def main():
     x4 = [8, 8, 8, 8, 8, 8, 8, 19, 8, 8, 8]
     y4 = [6.58, 5.76, 7.71, 8.84, 8.47, 7.04, 5.25, 12.50, 5.56, 7.91, 6.89]
 
-    list_x = [x, x4]
     list_y = [y1, y2, y3, y4]
 
-    arr_list_x = array(list_x)
     arr_list_y = array(list_y)
 
     mean_y = np.mean(arr_list_y, axis=1).round(2)
@@ -26,7 +24,7 @@ def main():
     results_y = pd.DataFrame([mean_y, var_y, std_y, pearson_y], columns=['y1', 'y2', 'y3', 'y4'])
 
     path="C:\\Users\\karol\\machine_learning\\data_results\\"
-    results_y.to_csv(os.path.join(path,r'results.csv'))
+    results_y.to_csv(os.path.join(path,r'results.csv'), sep=',',)
 
     fig, axs = plt.subplots(2, 2)
 

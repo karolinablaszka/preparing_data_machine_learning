@@ -45,18 +45,6 @@ def modified_z_score_outlier(df):
     median = np.median(df)
     mad_score = np.abs(0.6745 * (df - median) / mad_column)
     return mad_score > 3.5
-       
-
-
-# df_2 = df.select_dtypes(include=["int16", "int32", "int64", "float16", "float32", "float64"])
-# mean_imputer = SimpleImputer(missing_values=np.nan, strategy='mean', fill_value=None)
-# mean_imputer_transform = mean_imputer.fit_transform(df_2[['YearBuilt', 'Car']])
-# print (f'SimpleImputer: {mean_imputer_transform}')
-    
-knn = KNNImputer(missing_values=np.nan)
-knn_transform = knn.fit_transform(df)
-#print (f'KNNImputer: {knn_transform}')
-
 
  
 def score_dataset(X_train, X_test, y_train, y_test):
